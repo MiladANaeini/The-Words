@@ -15,7 +15,7 @@ function SearchPage({ navigate }) {
   const [word, setWord] = useState("");
   const [synonyms, setSynonyms] = useState([]);
   const [wordExist, setWordExist] = useState(true);
-  console.log("word", word);
+  const [randomId, setRandomId] = useState();
 
   const onSubmit = (word) => {
     searchWords(word);
@@ -32,11 +32,15 @@ function SearchPage({ navigate }) {
       setSynonyms(synonyms);
       console.log("synonyms", synonyms);
     } else {
-      AllWords.push({ name: word, id: word, groupId: IdGenerator() });
+      localStorage.setItem("newWord", word);
+      setWordExist(false);
+      setSynonyms([]);
       console.log("AllWords", AllWords);
     }
   };
-
+  const addNewWord = () => {
+    AllWords.push({ name: word, id: word, groupId: IdGenerator() });
+  };
   const IdGenerator = () => {
     let randomNumber = Math.floor(Math.random() * 100);
     let checkGroupId = AllWords.find(
@@ -46,12 +50,14 @@ function SearchPage({ navigate }) {
     console.log("checkGroupId", checkGroupId);
 
     if (!checkGroupId) {
+      setRandomId(randomNumber);
+      localStorage.setItem("newWordId", randomNumber);
+
       return randomNumber;
     } else {
       IdGenerator();
     }
   };
-
   return (
     <>
       <div>this is searchPage</div>
@@ -83,9 +89,28 @@ function SearchPage({ navigate }) {
                 <>
                   <h4>
                     This word does not exist in out data base, If you wish to
-                    add it feel free to click on the
+                    add it feel free to click on Add Word
                   </h4>
-                  <Button onClick={() => navigate(`add-page`)}>Add Word</Button>
+                  <Button
+                    onClick={() => {
+                      addNewWord();
+                      navigate(`add-page`);
+                    }}
+                  >
+                    Add Word
+                  </Button>
+                </>
+              )}
+              {synonyms.length > 0 && (
+                <>
+                  <h4>synonyms for {word}: </h4>
+                  {synonyms.map((item) => {
+                    return (
+                      <>
+                        <h3>{item.name}</h3>
+                      </>
+                    );
+                  })}
                 </>
               )}
             </CardBody>
