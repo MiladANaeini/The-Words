@@ -22,8 +22,7 @@ function SearchPage({ navigate }) {
   };
   const searchWords = (word) => {
     console.log("AllWords", AllWords);
-    let searchResult = [];
-    searchResult = AllWords.find((element) => element.name === word);
+    let searchResult = AllWords.find((element) => element.name === word);
     console.log("searchResult", searchResult);
     if (searchResult) {
       let synonyms = AllWords.filter(

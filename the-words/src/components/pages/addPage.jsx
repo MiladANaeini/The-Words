@@ -15,10 +15,9 @@ import { AllWords } from "../assets/data";
 function AddPage({ navigate }) {
   const [word, setWord] = useState(localStorage.getItem("newWord"));
   const [synonym, setSynonym] = useState([]);
-  const [input, setInput] = useState([]);
   const [randomId, setRandomId] = useState(localStorage.getItem("newWordId"));
   const [synonyms, setSynonyms] = useState([]);
-  useEffect(() => {}, [AllWords]);
+
   console.log(randomId);
 
   const addWord = () => {
@@ -28,8 +27,7 @@ function AddPage({ navigate }) {
   };
   const searchWords = (word) => {
     console.log("AllWords", AllWords);
-    let searchResult = [];
-    searchResult = AllWords.find((element) => element.name === word);
+    let searchResult = AllWords.find((element) => element.name === word);
     console.log("searchResult", searchResult);
     if (searchResult) {
       let synonyms = AllWords.filter(
