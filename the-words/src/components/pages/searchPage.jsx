@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardBody,
   Card,
@@ -21,21 +21,26 @@ function SearchPage({ navigate }) {
     searchWords(word);
   };
   const searchWords = (word) => {
-    console.log("AllWords", AllWords);
-    let searchResult = AllWords.find((element) => element.name === word);
-    console.log("searchResult", searchResult);
-    if (searchResult) {
-      let synonyms = AllWords.filter(
-        (item) => item.groupId === searchResult.groupId
-      );
-      setSynonyms(synonyms);
-      console.log("synonyms", synonyms);
-    } else {
-      localStorage.setItem("newWord", word);
-      setWordExist(false);
-      setSynonyms([]);
-      console.log("AllWords", AllWords);
-    }
+    // console.log("AllWords", AllWords);
+    // let searchResult = AllWords.find((element) => element.name === word);
+    // console.log("searchResult", searchResult);
+    // if (searchResult) {
+    //   let synonyms = AllWords.filter(
+    //     (item) => item.groupId === searchResult.groupId
+    //   );
+    //   setSynonyms(synonyms);
+    //   console.log("synonyms", synonyms);
+    // } else {
+    //   localStorage.setItem("newWord", word);
+    //   setWordExist(false);
+    //   setSynonyms([]);
+    //   console.log("AllWords", AllWords);
+    // }
+    fetch("http://localhost:3000/search-word?keyword=" + word)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.synonyms);
+      });
   };
   const addNewWord = () => {
     AllWords.push({ name: word, id: word, groupId: IdGenerator() });
