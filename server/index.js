@@ -92,20 +92,18 @@ app.post("/add-new-synonym", (req, res) => {
     }
     const groupId = req.body.groupId;
     const keyword = req.body.keyword
-    let newWordList = null
     readFile(processFile)
     function processFile(readFileData) {
-        let words = readFileData.words
+        let words = [...readFileData.words]
         let searchResults = words.find((element) => element.name === keyword)
         if (!searchResults) {
-            newWordList = readFileData
             const newWord = {
                 name: keyword,
                 id: keyword,
                 groupId
             }
-            newWordList.words.push(newWord)
-            writeToFile(newWordList)
+            words.push(newWord)
+            writeToFile({ words })
             return res.json(newWord)
         } else {
             return res.status(400).send({ message: "The word already exists" })
@@ -113,4 +111,3 @@ app.post("/add-new-synonym", (req, res) => {
     }
 
 })
-
