@@ -64,8 +64,14 @@ function SearchPage({ navigate }) {
   };
   return (
     <>
-      <div>this is searchPage</div>
-      <button onClick={() => navigate(`the-words`)}>The Words</button>
+      <Card>
+        <Row className="d-flex justify-content-center home-page-title">
+          <h3>Welcome to search page</h3>
+        </Row>
+      </Card>
+      <Row className="d-flex justify-content-center home-page-title">
+        <Button onClick={() => navigate(`the-words`)}>Home Page</Button>
+      </Row>
       <Row>
         <Colxx>
           <Card>
