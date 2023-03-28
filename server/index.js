@@ -9,27 +9,20 @@ const wordList = require("./data/words.json");
 const whitelist = ["http://localhost:3001"]
 
 const corsOptions = {
-
     origin: function (origin, callback) {
-
         if (!origin || whitelist.indexOf(origin) !== -1) {
-
             callback(null, true)
-
         } else {
-
             callback(new Error("Not allowed by CORS"))
-
         }
-
     },
-
     credentials: true,
-
 }
-
 app.use(cors(corsOptions))
+app.listen(3000, () => console.log("API server is running..."))
+
 // ================================== GET =================================
+// get synonyms
 app.get("/search-word", (req, res) => {
     if (!req.query.keyword) {
         return res.status(400).send({ message: "keyword not provided" })
@@ -60,6 +53,7 @@ app.get("/search-word", (req, res) => {
 
 })
 // ====================================== POST ============================
+// add new word API
 app.post("/add-new-word", (req, res) => {
     if (!req.body.keyword) {
         return res.status(400).send({ message: "keyword not provided" })
@@ -95,6 +89,7 @@ app.post("/add-new-word", (req, res) => {
     }
 
 })
+// add new synonym API
 app.post("/add-new-synonym", (req, res) => {
     if (!req.body.keyword || !req.body.groupId) {
         return res.status(400).send({ message: "keyword not provided" })
@@ -138,4 +133,3 @@ app.post("/add-new-synonym", (req, res) => {
 
 })
 
-app.listen(3000, () => console.log("API server is running..."))

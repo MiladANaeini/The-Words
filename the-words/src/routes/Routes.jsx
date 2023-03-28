@@ -12,19 +12,17 @@ const AppRoutes = () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <Routes basename="/the-words">
-        <Route
-          path="/the-words"
-          element={<HomePage navigate={navigate} />}
-        ></Route>
+      <Routes basename="/">
+        <Route path="/" element={<HomePage navigate={navigate} />}></Route>
         <Route
           path="/search-page"
           element={<SearchPage navigate={navigate} />}
         ></Route>
         <Route
-          path="/add-page"
+          path="/add-page/:newWordId/:newGroupId"
           element={<AddPage navigate={navigate} />}
         ></Route>
+        {/* <Route exact path="/details/:id" render={(props) => <DetailsPage globalStore={globalStore} {...props} /> } /> */}
       </Routes>
     </Suspense>
   );

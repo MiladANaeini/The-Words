@@ -10,43 +10,57 @@ import {
   Button,
 } from "reactstrap";
 import { Colxx } from "../common/Colxx";
-import { AllWords } from "../assets/data";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import LoadingComp from "../common/Loading";
 
 function AddPage({ navigate }) {
-  const [word, setWord] = useState(localStorage.getItem("newWord"));
-  const [synonym, setSynonym] = useState([]);
-  const [randomId, setRandomId] = useState(localStorage.getItem("newWordId"));
-  const [synonyms, setSynonyms] = useState([]);
-
-  console.log(randomId);
+  const [synonym, setSynonym] = useState("");
+  const [synonymsData, setSynonymsData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { newWordId, newGroupId } = useParams();
+  const [postError, setPostError] = useState(false);
 
   const addWord = () => {
-    AllWords.push({ name: synonym, id: synonym, groupId: parseInt(randomId) });
-    searchWords(word);
-    console.log("AllWords", AllWords);
+    axios
+      .post("http://localhost:3000/add-new-synonym", {
+        keyword: synonym,
+        groupId: newGroupId,
+      })
+      .then((res) => {
+        searchWords();
+      })
+      .catch((error) => {
+        console.log("Error", error.message);
+        setPostError(true);
+      });
   };
-  const searchWords = (word) => {
-    console.log("AllWords", AllWords);
-    let searchResult = AllWords.find((element) => element.name === word);
-    console.log("searchResult", searchResult);
-    if (searchResult) {
-      let synonyms = AllWords.filter(
-        (item) => item.groupId === searchResult.groupId
-      );
-      setSynonyms(synonyms);
-      console.log("synonyms", synonyms);
-    }
+  const searchWords = () => {
+    setIsLoading(true);
+    axios
+      .get("http://localhost:3000/search-word?keyword=" + newWordId)
+      .then((res) => {
+        setSynonymsData(res.data.synonyms);
+        setTimeout(() => {
+          setIsLoaded(true);
+          setIsLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        // setError(error.message);
+        setIsLoaded(false);
+        setIsLoading(false);
+      });
   };
-
   return (
     <>
-      {console.log("AllWords", AllWords)}
       <Card>
         <CardBody>
           <Form>
             <FormGroup>
-              <h1>The Word {word} Was Added</h1>
-              <h4>are you wishing to add synonym?</h4>
+              <h1>The Word "{newWordId}" Was Added</h1>
+              <h4>do you wish to add synonym?</h4>
               <Input
                 name="synonym"
                 placeholder="Please Enter The Synonym"
@@ -55,6 +69,7 @@ function AddPage({ navigate }) {
                   setSynonym(e.target.value);
                 }}
               />
+              {postError && <p>Plese enter the word</p>}
             </FormGroup>
             <Button
               onClick={() => {
@@ -65,17 +80,23 @@ function AddPage({ navigate }) {
             </Button>
             <Button onClick={() => navigate(`search-page`)}>Back</Button>
           </Form>
-          {synonyms.length > 0 && (
+          {!isLoading ? (
             <>
-              <h4>synonyms for {word}: </h4>
-              {synonyms.map((item) => {
-                return (
-                  <>
-                    <h3>{item.name}</h3>
-                  </>
-                );
-              })}
+              {isLoaded && (
+                <>
+                  <h4>synonyms : </h4>
+                  {synonymsData.map((item) => {
+                    return (
+                      <>
+                        <h3>{item.name}</h3>
+                      </>
+                    );
+                  })}
+                </>
+              )}
             </>
+          ) : (
+            <LoadingComp />
           )}
         </CardBody>
       </Card>

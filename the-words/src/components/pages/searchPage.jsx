@@ -11,55 +11,72 @@ import {
 } from "reactstrap";
 import { Colxx } from "../common/Colxx";
 import { AllWords } from "../assets/data";
+import axios from "axios";
+import LoadingComp from "../common/Loading";
 function SearchPage({ navigate }) {
   const [word, setWord] = useState("");
-  const [synonyms, setSynonyms] = useState([]);
-  const [wordExist, setWordExist] = useState(true);
   const [randomId, setRandomId] = useState();
+  const [synonymsData, setSynonymsData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const onSubmit = (word) => {
     searchWords(word);
   };
   const searchWords = (word) => {
-    // console.log("AllWords", AllWords);
-    // let searchResult = AllWords.find((element) => element.name === word);
-    // console.log("searchResult", searchResult);
-    // if (searchResult) {
-    //   let synonyms = AllWords.filter(
-    //     (item) => item.groupId === searchResult.groupId
-    //   );
-    //   setSynonyms(synonyms);
-    //   console.log("synonyms", synonyms);
-    // } else {
-    //   localStorage.setItem("newWord", word);
-    //   setWordExist(false);
-    //   setSynonyms([]);
-    //   console.log("AllWords", AllWords);
-    // }
-    fetch("http://localhost:3000/search-word?keyword=" + word)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data.synonyms);
+    setIsLoading(true);
+    axios
+      .get("http://localhost:3000/search-word?keyword=" + word)
+      .then((res) => {
+        setSynonymsData(res.data.synonyms);
+        setTimeout(() => {
+          setIsLoaded(true);
+          setIsLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setIsLoaded(false);
+        setIsLoading(false);
       });
   };
   const addNewWord = () => {
-    AllWords.push({ name: word, id: word, groupId: IdGenerator() });
+    axios
+      .post("http://localhost:3000/add-new-word", { keyword: word })
+      .then((res) => {
+        console.log("poetRes", res);
+        navigate(`add-page/${res.data.id}/${res.data.groupId}`);
+      })
+      .catch((error) => {
+        console.log("Error", error.message);
+      });
   };
-  const IdGenerator = () => {
-    let randomNumber = Math.floor(Math.random() * 100);
-    let checkGroupId = AllWords.find(
-      (element) => element.groupId == randomNumber
-    );
-    console.log("randomNumber", randomNumber);
-    console.log("checkGroupId", checkGroupId);
 
-    if (!checkGroupId) {
-      setRandomId(randomNumber);
-      localStorage.setItem("newWordId", randomNumber);
-
-      return randomNumber;
-    } else {
-      IdGenerator();
+  const showSynonyms = () => {
+    if (isLoaded && synonymsData.length > 0) {
+      return synonymsData.map((item) => {
+        return (
+          <>
+            <h3>{item.name}</h3>
+          </>
+        );
+      });
+    } else if (isLoaded && !synonymsData.length) {
+      return (
+        <>
+          <h4>
+            This word does not exist in out data base, If you wish to add it
+            feel free to click on Add Word
+          </h4>
+          <Button
+            onClick={() => {
+              addNewWord();
+            }}
+          >
+            Add Word
+          </Button>
+        </>
+      );
     }
   };
   return (
@@ -70,7 +87,7 @@ function SearchPage({ navigate }) {
         </Row>
       </Card>
       <Row className="d-flex justify-content-center home-page-title">
-        <Button onClick={() => navigate(`the-words`)}>Home Page</Button>
+        <Button onClick={() => navigate(`/`)}>Home Page</Button>
       </Row>
       <Row>
         <Colxx>
@@ -91,38 +108,7 @@ function SearchPage({ navigate }) {
                 </FormGroup>
                 <Button onClick={() => onSubmit(word)}>Submit</Button>
               </Form>
-              {wordExist ? (
-                <h4>
-                  Please surch for the word to be able to see the synonyms
-                </h4>
-              ) : (
-                <>
-                  <h4>
-                    This word does not exist in out data base, If you wish to
-                    add it feel free to click on Add Word
-                  </h4>
-                  <Button
-                    onClick={() => {
-                      addNewWord();
-                      navigate(`add-page`);
-                    }}
-                  >
-                    Add Word
-                  </Button>
-                </>
-              )}
-              {synonyms.length > 0 && (
-                <>
-                  <h4>synonyms for {word}: </h4>
-                  {synonyms.map((item) => {
-                    return (
-                      <>
-                        <h3>{item.name}</h3>
-                      </>
-                    );
-                  })}
-                </>
-              )}
+              {isLoading ? <LoadingComp /> : showSynonyms()}
             </CardBody>
           </Card>
         </Colxx>
