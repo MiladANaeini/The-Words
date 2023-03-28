@@ -2,10 +2,8 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
-const AllWords = require("./data/data")
 const app = express();
 app.use(express.json());
-const wordList = require("./data/words.json");
 const whitelist = ["http://localhost:3001"]
 
 const corsOptions = {
@@ -21,21 +19,34 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.listen(3000, () => console.log("API server is running..."))
 
+//============================ SHARED FUNCTIONS =============================
+
+function readFile(processFile) {
+    fs.readFile("./data/words.json", "utf8", (err, fileData) => {
+        if (err) {
+            console.log("Failed to read data from file");
+        }
+        processFile(JSON.parse(fileData))
+    });
+}
+
+function writeToFile(newData) {
+    fs.writeFile('./data/words.json', JSON.stringify(newData), err => {
+        if (err) {
+            console.log("Failed to write data to file");
+
+        }
+    })
+}
+
 // ================================== GET =================================
+
 // get synonyms
 app.get("/search-word", (req, res) => {
     if (!req.query.keyword) {
         return res.status(400).send({ message: "keyword not provided" })
     }
-    let AllWords = null
-    fs.readFile("./data/words.json", "utf8", (err, fileData) => {
-        if (err) {
-            console.log("File read failed:", err);
-            return;
-        }
-        processFile(JSON.parse(fileData))
-    });
-
+    readFile(processFile)
     function processFile(readFileData) {
         let synonyms = []
         let searchResult = readFileData.words.find((element) => element.name === req.query.keyword);
@@ -43,16 +54,15 @@ app.get("/search-word", (req, res) => {
             synonyms = readFileData.words.filter(
                 (item) => item.groupId === searchResult.groupId
             );
-
         }
         return res.json({
             synonyms
         })
     }
-
-
 })
+
 // ====================================== POST ============================
+
 // add new word API
 app.post("/add-new-word", (req, res) => {
     if (!req.body.keyword) {
@@ -61,14 +71,7 @@ app.post("/add-new-word", (req, res) => {
     const groupId = uuid();
     const keyword = req.body.keyword
     let newWordList = null
-    fs.readFile("./data/words.json", "utf8", (err, fileData) => {
-        if (err) {
-            console.log("File read failed:", err);
-            return;
-        }
-        processFile(JSON.parse(fileData))
-    });
-
+    readFile(processFile)
     function processFile(readFileData) {
         newWordList = readFileData
         const newWord = {
@@ -77,18 +80,11 @@ app.post("/add-new-word", (req, res) => {
             groupId
         }
         newWordList.words.push(newWord)
-        console.log('newWordList ', newWordList);
-        fs.writeFile('./data/words.json', JSON.stringify(newWordList), err => {
-            if (err) {
-                console.log('Error writing file', err)
-            } else {
-                console.log('Successfully wrote file')
-            }
-        })
+        writeToFile(newWordList)
         return res.json(newWord)
     }
-
 })
+
 // add new synonym API
 app.post("/add-new-synonym", (req, res) => {
     if (!req.body.keyword || !req.body.groupId) {
@@ -97,19 +93,11 @@ app.post("/add-new-synonym", (req, res) => {
     const groupId = req.body.groupId;
     const keyword = req.body.keyword
     let newWordList = null
-    fs.readFile("./data/words.json", "utf8", (err, fileData) => {
-        if (err) {
-            console.log("File read failed:", err);
-            return;
-        }
-        processFile(JSON.parse(fileData))
-    });
-
+    readFile(processFile)
     function processFile(readFileData) {
         let words = readFileData.words
         let searchResults = words.find((element) => element.name === keyword)
         if (!searchResults) {
-
             newWordList = readFileData
             const newWord = {
                 name: keyword,
@@ -117,14 +105,7 @@ app.post("/add-new-synonym", (req, res) => {
                 groupId
             }
             newWordList.words.push(newWord)
-            console.log('newWordList ', newWordList);
-            fs.writeFile('./data/words.json', JSON.stringify(newWordList), err => {
-                if (err) {
-                    console.log('Error writing file', err)
-                } else {
-                    console.log('Successfully wrote file')
-                }
-            })
+            writeToFile(newWordList)
             return res.json(newWord)
         } else {
             return res.status(400).send({ message: "The word already exists" })

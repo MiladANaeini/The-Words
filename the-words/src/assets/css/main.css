@@ -1,0 +1,81 @@
+body {
+  background-image: url("../images/background.jpg");
+  background-size: cover;
+}
+.cursor--pointer {
+  cursor: pointer;
+}
+.top-title {
+  font-size: 16px;
+  text-align: left;
+  color: #ffffff;
+}
+.home-page-title {
+  font-size: 16px;
+  text-align: justify;
+  color: #a5641f;
+}
+.search-page-title {
+  font-size: 18px;
+  text-align: justify;
+  color: #804a0f;
+}
+.home-page-header {
+  font-size: 70px;
+  text-align: center;
+  color: #804a0f;
+  font-weight: 600;
+}
+
+.topnav {
+  background-color: #000000;
+  padding: 15px;
+  opacity: 80%;
+}
+
+.card-background {
+  background-color: #c6885997;
+  opacity: 80%;
+}
+.input-label {
+  color: #000000;
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+.button-custom {
+  background-color: #000000;
+  color: #ffffff;
+  opacity: 85%;
+  padding: 10px;
+  width: 25vh;
+}
+.button-custom:hover {
+  background-color: #000000;
+  color: #a5641f;
+}
+.button-custom:focus {
+  background-color: #001227ed;
+}
+.button-custom:active {
+  background-color: #001227ed;
+}
+
+.home-page-card {
+  background-color: #bda99a;
+  border-radius: 20px;
+  padding: 50px;
+  opacity: 95%;
+}
+
+.button-start:hover {
+  background-color: #e1d501;
+  color: #022043;
+}
+.button-start {
+  background-color: #f9ee08;
+  border-radius: 20px;
+  color: #001227ed;
+  font-weight: 800;
+  padding: 20px;
+  width: 100%;
+}

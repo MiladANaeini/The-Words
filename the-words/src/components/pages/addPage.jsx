@@ -1,60 +1,70 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   CardBody,
   Card,
-  Row,
-  CardTitle,
   Form,
   FormGroup,
   Input,
   Button,
+  Alert,
 } from "reactstrap";
-import { Colxx } from "../common/Colxx";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import LoadingComp from "../common/Loading";
+import {
+  SEARCH_WORD_URL,
+  ADD_NEW_SYNONYM_URL,
+} from "../../constants/constants";
 
 function AddPage({ navigate }) {
   const [synonym, setSynonym] = useState("");
-  const [synonymsData, setSynonymsData] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [synonymsData, setSynonymsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { newWordId, newGroupId } = useParams();
-  const [postError, setPostError] = useState(false);
+  const [error, setError] = useState(null);
 
-  const addWord = () => {
+  const addSynonym = () => {
+    setError(null);
     axios
-      .post("http://localhost:3000/add-new-synonym", {
+      .post(ADD_NEW_SYNONYM_URL, {
         keyword: synonym,
         groupId: newGroupId,
       })
-      .then((res) => {
+      .then(() => {
         searchWords();
       })
       .catch((error) => {
-        console.log("Error", error.message);
-        setPostError(true);
+        setError(error);
       });
   };
+
   const searchWords = () => {
+    setError(null);
     setIsLoading(true);
     axios
-      .get("http://localhost:3000/search-word?keyword=" + newWordId)
+      .get(SEARCH_WORD_URL, { params: { keyword: newWordId } })
       .then((res) => {
         setSynonymsData(res.data.synonyms);
-        setTimeout(() => {
-          setIsLoaded(true);
-          setIsLoading(false);
-        }, 1000);
+        setIsLoading(false);
       })
       .catch((error) => {
-        // setError(error.message);
-        setIsLoaded(false);
+        setError(error);
         setIsLoading(false);
       });
   };
+
+  const handleChange = (event) => {
+    setError(null);
+    setSynonym(event.target.value);
+  };
+
+  const navigateBack = () => {
+    navigate(`search-page`);
+  };
+
   return (
-    <>
+    <div>
+      {error && <Alert color="danger">{error.message}</Alert>}
       <Card>
         <CardBody>
           <Form>
@@ -65,42 +75,44 @@ function AddPage({ navigate }) {
                 name="synonym"
                 placeholder="Please Enter The Synonym"
                 value={synonym}
-                onChange={(e) => {
-                  setSynonym(e.target.value);
-                }}
+                onChange={handleChange}
               />
-              {postError && <p>Plese enter the word</p>}
             </FormGroup>
             <Button
-              onClick={() => {
-                addWord();
-              }}
+              disabled={isLoading || !synonym.length}
+              onClick={addSynonym}
             >
               Add Synonym
             </Button>
-            <Button onClick={() => navigate(`search-page`)}>Back</Button>
+            <Button className="ms-2" onClick={navigateBack}>
+              Back
+            </Button>
           </Form>
           {!isLoading ? (
-            <>
-              {isLoaded && (
+            <div>
+              {synonymsData && (
                 <>
-                  <h4>synonyms : </h4>
-                  {synonymsData.map((item) => {
-                    return (
-                      <>
-                        <h3>{item.name}</h3>
-                      </>
-                    );
-                  })}
+                  {synonymsData.length && (
+                    <div>
+                      <h4>synonyms : </h4>
+                      {synonymsData.map((item) => {
+                        return (
+                          <div>
+                            <h3>{item.name}</h3>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </>
               )}
-            </>
+            </div>
           ) : (
             <LoadingComp />
           )}
         </CardBody>
       </Card>
-    </>
+    </div>
   );
 }
 export default AddPage;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Row, Tooltip } from "reactstrap";
 import { Colxx } from "./Colxx";
-import GitHubLogo from "../assets/images/GitHubLogo.png";
+import GitHubLogo from "../../assets/images/GitHubLogo.png";
 const TopNav = () => {
   const [isOpen, setIsOpen] = useState(false);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   CardBody,
   Card,
@@ -8,112 +8,129 @@ import {
   FormGroup,
   Input,
   Button,
+  Alert,
+  Badge,
 } from "reactstrap";
 import { Colxx } from "../common/Colxx";
-import { AllWords } from "../assets/data";
 import axios from "axios";
 import LoadingComp from "../common/Loading";
+import { SEARCH_WORD_URL, ADD_NEW_WORD_URL } from "../../constants/constants";
+
 function SearchPage({ navigate }) {
   const [word, setWord] = useState("");
-  const [randomId, setRandomId] = useState();
-  const [synonymsData, setSynonymsData] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [synonymsData, setSynonymsData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const onSubmit = (word) => {
-    searchWords(word);
-  };
-  const searchWords = (word) => {
+  const searchWords = () => {
     setIsLoading(true);
+    setError(null);
     axios
-      .get("http://localhost:3000/search-word?keyword=" + word)
+      .get(SEARCH_WORD_URL, {
+        params: {
+          keyword: word,
+        },
+      })
       .then((res) => {
         setSynonymsData(res.data.synonyms);
-        setTimeout(() => {
-          setIsLoaded(true);
-          setIsLoading(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        setIsLoaded(false);
         setIsLoading(false);
-      });
-  };
-  const addNewWord = () => {
-    axios
-      .post("http://localhost:3000/add-new-word", { keyword: word })
-      .then((res) => {
-        console.log("poetRes", res);
-        navigate(`add-page/${res.data.id}/${res.data.groupId}`);
       })
       .catch((error) => {
-        console.log("Error", error.message);
+        setIsLoading(false);
+        setError(error);
       });
   };
 
-  const showSynonyms = () => {
-    if (isLoaded && synonymsData.length > 0) {
-      return synonymsData.map((item) => {
-        return (
-          <>
-            <h3>{item.name}</h3>
-          </>
-        );
+  const addNewWord = () => {
+    axios
+      .post(ADD_NEW_WORD_URL, { keyword: word })
+      .then((res) => {
+        navigate(`add-page/${res.data.id}/${res.data.groupId}`);
+      })
+      .catch((error) => {
+        setError(error);
       });
-    } else if (isLoaded && !synonymsData.length) {
+  };
+
+  const handleChange = (event) => {
+    setError(null);
+    setWord(event.target.value);
+  };
+
+  const showSynonyms = () => {
+    if (synonymsData) {
+      if (synonymsData.length) {
+        return (
+          <Row>
+            {synonymsData.map((item) => (
+              <Colxx xs={3}>
+                <h3>
+                  <Badge color="info">{item.name}</Badge>
+                </h3>
+              </Colxx>
+            ))}
+          </Row>
+        );
+      }
       return (
         <>
-          <h4>
-            This word does not exist in out data base, If you wish to add it
-            feel free to click on Add Word
-          </h4>
-          <Button
-            onClick={() => {
-              addNewWord();
-            }}
-          >
-            Add Word
-          </Button>
+          <div className="d-flex justify-content-center">
+            <h4>
+              This word does not exist in out data base, If you wish to add it
+              click on Add Word
+            </h4>
+          </div>
+          <div className="d-flex justify-content-center">
+            <Button className="button-custom mt-1" onClick={addNewWord}>
+              Add Word
+            </Button>
+          </div>
         </>
       );
     }
   };
+
   return (
-    <>
-      <Card>
-        <Row className="d-flex justify-content-center home-page-title">
-          <h3>Welcome to search page</h3>
+    <div>
+      {error && <Alert color="danger">{error.message}</Alert>}
+      <div>
+        <Row className="d-flex justify-content-center">
+          <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
+            <Card className="home-page-card">
+              <CardBody>
+                <div className="d-flex justify-content-center home-page-title">
+                  <h3>Welcome to search page</h3>
+                </div>
+                <CardTitle className="input-label">Enter The Word</CardTitle>
+                <Form>
+                  <FormGroup>
+                    <Input
+                      name="word"
+                      id="word"
+                      placeholder="Please Enter The Word"
+                      value={word}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                  <div className="d-flex justify-content-center">
+                    <Button
+                      className="button-custom mt-1 "
+                      disabled={!word.length || isLoading}
+                      onClick={searchWords}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </Form>
+                <div className="mt-4">
+                  {isLoading ? <LoadingComp /> : showSynonyms()}
+                </div>
+              </CardBody>
+            </Card>
+          </Colxx>
         </Row>
-      </Card>
-      <Row className="d-flex justify-content-center home-page-title">
-        <Button onClick={() => navigate(`/`)}>Home Page</Button>
-      </Row>
-      <Row>
-        <Colxx>
-          <Card>
-            <CardBody>
-              <CardTitle>Enter The Word</CardTitle>
-              <Form>
-                <FormGroup>
-                  <Input
-                    name="word"
-                    id="word"
-                    placeholder="Please Enter The Word"
-                    value={word}
-                    onChange={(e) => {
-                      setWord(e.target.value);
-                    }}
-                  />
-                </FormGroup>
-                <Button onClick={() => onSubmit(word)}>Submit</Button>
-              </Form>
-              {isLoading ? <LoadingComp /> : showSynonyms()}
-            </CardBody>
-          </Card>
-        </Colxx>
-      </Row>
-    </>
+      </div>
+    </div>
   );
 }
 export default SearchPage;
