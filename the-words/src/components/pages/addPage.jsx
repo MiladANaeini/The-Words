@@ -61,6 +61,13 @@ function AddPage({ navigate }) {
     setSynonym(event.target.value);
   };
 
+  const handleOnKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addSynonym();
+    }
+  };
+
   const navigateBack = () => {
     navigate(`search-page`);
   };
@@ -85,6 +92,7 @@ function AddPage({ navigate }) {
                     placeholder="Please Enter The Synonym"
                     value={synonym}
                     onChange={handleChange}
+                    onKeyPress={handleOnKeyPress}
                   />
                 </FormGroup>
                 <Button

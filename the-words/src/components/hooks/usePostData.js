@@ -1,29 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-const useFetchData = ({ url = '', callBack = () => { }, params = {}, enabled = true }) => {
+const usePostData = ({ url = '', callBack = () => { }, body = {} }) => {
     const [result, setResult] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    useEffect(() => {
-        if (enabled) {
-            getData();
-        }
-    }, []);
-
-    const getData = () => {
+    const postData = () => {
         setIsLoading(true);
         setError(null);
         axios
-            .get(url, {
-                params: {
-                    ...params
-                },
-            })
+            .post(url, body)
             .then((res) => {
                 setResult(res.data);
-                callBack(res.data);
+                callBack(res.data)
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -34,7 +24,7 @@ const useFetchData = ({ url = '', callBack = () => { }, params = {}, enabled = t
     }
 
     return (
-        { isLoading, error, result, getData }
+        { isLoading, error, result, postData }
     )
 }
-export default useFetchData
+export default usePostData

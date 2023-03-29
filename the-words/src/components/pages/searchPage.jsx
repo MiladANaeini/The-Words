@@ -12,12 +12,12 @@ import {
   Badge,
 } from "reactstrap";
 import { Colxx } from "../common/Colxx";
-import axios from "axios";
 import LoadingComp from "../common/Loading";
 import { SEARCH_WORD_URL, ADD_NEW_WORD_URL } from "../../constants/constants";
 import useFetchData from "../hooks/useFetchData";
+import usePostData from "../hooks/usePostData";
 
-function SearchPage({ navigate }) {
+const SearchPage = ({ navigate }) => {
   const [word, setWord] = useState("");
 
   const { getData, result: synonymsData, isLoading, error } = useFetchData({
@@ -25,20 +25,27 @@ function SearchPage({ navigate }) {
     params: { keyword: word },
     enabled: false,
   });
-
-  const addNewWord = () => {
-    axios
-      .post(ADD_NEW_WORD_URL, { keyword: word })
-      .then((res) => {
-        navigate(`add-page/${res.data.id}/${res.data.groupId}`);
-      })
-      .catch((error) => {
-        // setError(error);
-      });
+  const redirectToAddSynonyms = (res) => {
+    navigate(`add-page/${res.id}/${res.groupId}`);
   };
+
+  const { postData, error: postError, result: addedWordData } = usePostData({
+    url: ADD_NEW_WORD_URL,
+    body: {
+      keyword: word,
+    },
+    callBack: redirectToAddSynonyms,
+  });
 
   const handleChange = (event) => {
     setWord(event.target.value);
+  };
+
+  const handleOnKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      getData();
+    }
   };
 
   const showSynonyms = () => {
@@ -65,7 +72,7 @@ function SearchPage({ navigate }) {
             </h4>
           </div>
           <div className="d-flex justify-content-center">
-            <Button className="button-custom mt-1" onClick={addNewWord}>
+            <Button className="button-custom mt-1" onClick={postData}>
               Add Word
             </Button>
           </div>
@@ -77,6 +84,7 @@ function SearchPage({ navigate }) {
   return (
     <div>
       {error && <Alert color="danger">{error.message}</Alert>}
+      {postError && <Alert color="danger">{postError.message}</Alert>}
       <div>
         <Row className="d-flex justify-content-center">
           <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
@@ -94,6 +102,7 @@ function SearchPage({ navigate }) {
                       placeholder="Please Enter The Word"
                       value={word}
                       onChange={handleChange}
+                      onKeyPress={handleOnKeyPress}
                     />
                   </FormGroup>
                   <div className="d-flex justify-content-center">
@@ -116,5 +125,5 @@ function SearchPage({ navigate }) {
       </div>
     </div>
   );
-}
+};
 export default SearchPage;
