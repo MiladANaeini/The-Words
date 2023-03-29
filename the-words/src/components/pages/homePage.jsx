@@ -21,6 +21,7 @@ function HomePage({ navigate }) {
             </div>
             <div className="d-flex justify-content-center">
               <Button
+                data-testid="searchButton"
                 className="button-custom mt-5 w-100"
                 onClick={() => navigate(`search-page`)}
               >

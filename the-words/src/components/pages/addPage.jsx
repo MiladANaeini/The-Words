@@ -7,6 +7,8 @@ import {
   Input,
   Button,
   Alert,
+  Row,
+  CardTitle,
 } from "reactstrap";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -15,6 +17,7 @@ import {
   SEARCH_WORD_URL,
   ADD_NEW_SYNONYM_URL,
 } from "../../constants/constants";
+import { Colxx } from "../common/Colxx";
 
 function AddPage({ navigate }) {
   const [synonym, setSynonym] = useState("");
@@ -65,53 +68,62 @@ function AddPage({ navigate }) {
   return (
     <div>
       {error && <Alert color="danger">{error.message}</Alert>}
-      <Card>
-        <CardBody>
-          <Form>
-            <FormGroup>
-              <h1>The Word "{newWordId}" Was Added</h1>
-              <h4>do you wish to add synonym?</h4>
-              <Input
-                name="synonym"
-                placeholder="Please Enter The Synonym"
-                value={synonym}
-                onChange={handleChange}
-              />
-            </FormGroup>
-            <Button
-              disabled={isLoading || !synonym.length}
-              onClick={addSynonym}
-            >
-              Add Synonym
-            </Button>
-            <Button className="ms-2" onClick={navigateBack}>
-              Back
-            </Button>
-          </Form>
-          {!isLoading ? (
-            <div>
-              {synonymsData && (
-                <>
-                  {synonymsData.length && (
-                    <div>
-                      <h4>synonyms : </h4>
-                      {synonymsData.map((item) => {
-                        return (
-                          <div>
-                            <h3>{item.name}</h3>
-                          </div>
-                        );
-                      })}
-                    </div>
+      <Row className="d-flex justify-content-center">
+        <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
+          <Card>
+            <CardBody>
+              <Form>
+                <FormGroup>
+                  <div className="d-flex justify-content-center home-page-title">
+                    <h1>The Word "{newWordId}" Was Added</h1>
+                  </div>
+                  <CardTitle className="input-label">
+                    Do you wish to add synonym?
+                  </CardTitle>
+                  <Input
+                    name="synonym"
+                    placeholder="Please Enter The Synonym"
+                    value={synonym}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <Button
+                  className="button-custom mt-1 "
+                  disabled={isLoading || !synonym.length}
+                  onClick={addSynonym}
+                >
+                  Add Synonym
+                </Button>
+                <Button className="ms-2 button-custom" onClick={navigateBack}>
+                  Back
+                </Button>
+              </Form>
+              {!isLoading ? (
+                <div>
+                  {synonymsData && (
+                    <>
+                      {synonymsData.length && (
+                        <div>
+                          <h4>synonyms : </h4>
+                          {synonymsData.map((item) => {
+                            return (
+                              <div>
+                                <h3>{item.name}</h3>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
+                </div>
+              ) : (
+                <LoadingComp />
               )}
-            </div>
-          ) : (
-            <LoadingComp />
-          )}
-        </CardBody>
-      </Card>
+            </CardBody>
+          </Card>
+        </Colxx>
+      </Row>
     </div>
   );
 }

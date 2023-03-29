@@ -95,8 +95,8 @@ app.post("/add-new-synonym", (req, res) => {
     readFile(processFile)
     function processFile(readFileData) {
         let words = [...readFileData.words]
-        let searchResults = words.find((element) => element.name === keyword)
-        if (!searchResults) {
+        let existingWord = words.find((element) => element.name === keyword)
+        if (!existingWord) {
             const newWord = {
                 name: keyword,
                 id: keyword,
@@ -107,6 +107,8 @@ app.post("/add-new-synonym", (req, res) => {
             return res.json(newWord)
         } else {
             return res.status(400).send({ message: "The word already exists" })
+
+
         }
     }
 

@@ -15,6 +15,7 @@ import { Colxx } from "../common/Colxx";
 import axios from "axios";
 import LoadingComp from "../common/Loading";
 import { SEARCH_WORD_URL, ADD_NEW_WORD_URL } from "../../constants/constants";
+import useFetchData from "../hooks/useFetchData";
 
 function SearchPage({ navigate }) {
   const [word, setWord] = useState("");
@@ -22,6 +23,8 @@ function SearchPage({ navigate }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // const searchWordsData = useFetchData({ url: SEARCH_WORD_URL, data: word });
+  // console.log("searchWordsData", searchWordsData);
   const searchWords = () => {
     setIsLoading(true);
     setError(null);
