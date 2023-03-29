@@ -17,6 +17,9 @@
     "reactstrap": "^9.1.6",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "webpack": "4.28.3"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
