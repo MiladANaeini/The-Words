@@ -1,70 +1,48 @@
-# Getting Started with Create React App
+This project was done by Milad Arabi Naeini.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# The Words
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+The Words is an app to search for existing synonyms for words and also gives the user the ability to add new words and synonyms.
 
-### `npm start`
+The hosted version can be found at: [http://ec2-16-170-167-40.eu-north-1.compute.amazonaws.com:3001/].
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Github repo
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+https://github.com/MiladANaeini/The-Words
 
-### `npm test`
+## Technologies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The Words is built with the following tools:
 
-### `npm run build`
+- Frontend: React / reactstrap
+- Backend: Node.js / express
+- Web hosting: Docker in AWS
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Setup
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- To run the client, navigate to the-words folder and do the followng:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. To install dependencies, run:
+   npm install
+2. To run client app, run:
+   npm start
+   (app will run on localhost:3001)
 
-### `npm run eject`
+- To run the server, navigate to server folder and do the followng:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. To install dependencies, run:
+   npm install
+2. To run server app, run:
+   npm start
+   (app will run on localhost:3000)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Running locally in development mode
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- In order to use the local server API endpoints, navigate to the-words > src > constants > constant.js
+- Choose the localhost:3000 as the base URL and comment the second one
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Using the application
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+There are some previously added words to the list. If you wish to see them when using the app for the first time, search for the word "happy" or "sad" in the search box, or add new words of your choice if you wish

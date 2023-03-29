@@ -6,7 +6,7 @@ function Layout() {
   return (
     <div>
       <TopNav />
-      <div className="mt-3">
+      <div className="mt-3 container">
         <CardBody>
           <AppRoutes />
         </CardBody>

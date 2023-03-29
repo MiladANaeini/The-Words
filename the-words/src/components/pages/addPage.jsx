@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "reactstrap";
 import { useParams } from "react-router-dom";
-import LoadingComp from "../common/Loading";
 import {
   SEARCH_WORD_URL,
   ADD_NEW_SYNONYM_URL,
@@ -19,6 +18,8 @@ import {
 import { Colxx } from "../common/Colxx";
 import useFetchData from "../hooks/useFetchData";
 import usePostData from "../hooks/usePostData";
+import SynonymsList from "../common/SynonymsList";
+import Loading from "../common/Loading";
 
 function AddPage({ navigate }) {
   const [synonym, setSynonym] = useState("");
@@ -54,11 +55,13 @@ function AddPage({ navigate }) {
 
   return (
     <div>
-      {error && <Alert color="danger">{error.message}</Alert>}
-      {postError && <Alert color="danger">{postError.message}</Alert>}
+      {error && <Alert color="danger">{error.response.data.message}</Alert>}
+      {postError && (
+        <Alert color="danger">{postError.response.data.message}</Alert>
+      )}
       <Row className="d-flex justify-content-center">
         <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
-          <Card>
+          <Card className="home-page-card">
             <CardBody>
               <Form>
                 <FormGroup>
@@ -76,38 +79,26 @@ function AddPage({ navigate }) {
                     onKeyPress={handleOnKeyPress}
                   />
                 </FormGroup>
-                <Button
-                  className="button-custom mt-1 "
-                  disabled={isLoading || !synonym.length}
-                  onClick={postData}
-                >
-                  Add Synonym
-                </Button>
-                <Button className="ms-2 button-custom" onClick={navigateBack}>
-                  Back
-                </Button>
+                <Row className="d-flex justify-content-center">
+                  <Button
+                    className="button-custom mt-1"
+                    disabled={isLoading || !synonym.length}
+                    onClick={postData}
+                  >
+                    Add Synonym
+                  </Button>
+                  <Button
+                    className="ms-1 mt-1 button-custom"
+                    onClick={navigateBack}
+                  >
+                    Back
+                  </Button>
+                </Row>
               </Form>
-              {!isLoading ? (
-                <div>
-                  {synonymsData && (
-                    <>
-                      {synonymsData.synonyms.length && (
-                        <div>
-                          <h4>synonyms : </h4>
-                          {synonymsData.synonyms.map((item) => {
-                            return (
-                              <div>
-                                <h3>{item.name}</h3>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
+              {isLoading ? (
+                <Loading />
               ) : (
-                <LoadingComp />
+                <SynonymsList synonymsData={synonymsData} />
               )}
             </CardBody>
           </Card>

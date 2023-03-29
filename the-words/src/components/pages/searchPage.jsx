@@ -9,13 +9,13 @@ import {
   Input,
   Button,
   Alert,
-  Badge,
 } from "reactstrap";
 import { Colxx } from "../common/Colxx";
 import LoadingComp from "../common/Loading";
 import { SEARCH_WORD_URL, ADD_NEW_WORD_URL } from "../../constants/constants";
 import useFetchData from "../hooks/useFetchData";
 import usePostData from "../hooks/usePostData";
+import SynonymsList from "../common/SynonymsList";
 
 const SearchPage = ({ navigate }) => {
   const [word, setWord] = useState("");
@@ -51,23 +51,13 @@ const SearchPage = ({ navigate }) => {
   const showSynonyms = () => {
     if (synonymsData) {
       if (synonymsData.synonyms.length) {
-        return (
-          <Row>
-            {synonymsData.synonyms.map((item) => (
-              <Colxx xs={3}>
-                <h3>
-                  <Badge color="info">{item.name}</Badge>
-                </h3>
-              </Colxx>
-            ))}
-          </Row>
-        );
+        return <SynonymsList synonymsData={synonymsData} />;
       }
       return (
         <>
           <div className="d-flex justify-content-center">
             <h4>
-              This word does not exist in out data base, If you wish to add it
+              This word does not exist in out database, If you wish to add it
               click on Add Word
             </h4>
           </div>
@@ -83,8 +73,10 @@ const SearchPage = ({ navigate }) => {
 
   return (
     <div>
-      {error && <Alert color="danger">{error.message}</Alert>}
-      {postError && <Alert color="danger">{postError.message}</Alert>}
+      {error && <Alert color="danger">{error.response.data.message}</Alert>}
+      {postError && (
+        <Alert color="danger">{postError.response.data.message}</Alert>
+      )}
       <div>
         <Row className="d-flex justify-content-center">
           <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
