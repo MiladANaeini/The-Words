@@ -11,60 +11,40 @@ import {
   CardTitle,
 } from "reactstrap";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import LoadingComp from "../common/Loading";
 import {
   SEARCH_WORD_URL,
   ADD_NEW_SYNONYM_URL,
 } from "../../constants/constants";
 import { Colxx } from "../common/Colxx";
+import useFetchData from "../hooks/useFetchData";
+import usePostData from "../hooks/usePostData";
 
 function AddPage({ navigate }) {
   const [synonym, setSynonym] = useState("");
-  const [synonymsData, setSynonymsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const { newWordId, newGroupId } = useParams();
-  const [error, setError] = useState(null);
-
-  const addSynonym = () => {
-    setError(null);
-    axios
-      .post(ADD_NEW_SYNONYM_URL, {
-        keyword: synonym,
-        groupId: newGroupId,
-      })
-      .then(() => {
-        searchWords();
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  };
-
-  const searchWords = () => {
-    setError(null);
-    setIsLoading(true);
-    axios
-      .get(SEARCH_WORD_URL, { params: { keyword: newWordId } })
-      .then((res) => {
-        setSynonymsData(res.data.synonyms);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-      });
-  };
+  const { getData, result: synonymsData, isLoading, error } = useFetchData({
+    url: SEARCH_WORD_URL,
+    params: { keyword: newWordId },
+    enabled: false,
+  });
+  const { postData, error: postError } = usePostData({
+    url: ADD_NEW_SYNONYM_URL,
+    body: {
+      keyword: synonym,
+      groupId: newGroupId,
+    },
+    callBack: getData,
+  });
 
   const handleChange = (event) => {
-    setError(null);
     setSynonym(event.target.value);
   };
 
   const handleOnKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      addSynonym();
+      postData();
     }
   };
 
@@ -75,6 +55,7 @@ function AddPage({ navigate }) {
   return (
     <div>
       {error && <Alert color="danger">{error.message}</Alert>}
+      {postError && <Alert color="danger">{postError.message}</Alert>}
       <Row className="d-flex justify-content-center">
         <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
           <Card>
@@ -98,7 +79,7 @@ function AddPage({ navigate }) {
                 <Button
                   className="button-custom mt-1 "
                   disabled={isLoading || !synonym.length}
-                  onClick={addSynonym}
+                  onClick={postData}
                 >
                   Add Synonym
                 </Button>
@@ -110,10 +91,10 @@ function AddPage({ navigate }) {
                 <div>
                   {synonymsData && (
                     <>
-                      {synonymsData.length && (
+                      {synonymsData.synonyms.length && (
                         <div>
                           <h4>synonyms : </h4>
-                          {synonymsData.map((item) => {
+                          {synonymsData.synonyms.map((item) => {
                             return (
                               <div>
                                 <h3>{item.name}</h3>

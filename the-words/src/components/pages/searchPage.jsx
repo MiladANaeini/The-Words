@@ -29,7 +29,7 @@ const SearchPage = ({ navigate }) => {
     navigate(`add-page/${res.id}/${res.groupId}`);
   };
 
-  const { postData, error: postError, result: addedWordData } = usePostData({
+  const { postData, error: postError } = usePostData({
     url: ADD_NEW_WORD_URL,
     body: {
       keyword: word,
