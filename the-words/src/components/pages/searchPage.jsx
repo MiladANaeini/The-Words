@@ -19,30 +19,12 @@ import useFetchData from "../hooks/useFetchData";
 
 function SearchPage({ navigate }) {
   const [word, setWord] = useState("");
-  const [synonymsData, setSynonymsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  // const searchWordsData = useFetchData({ url: SEARCH_WORD_URL, data: word });
-  // console.log("searchWordsData", searchWordsData);
-  const searchWords = () => {
-    setIsLoading(true);
-    setError(null);
-    axios
-      .get(SEARCH_WORD_URL, {
-        params: {
-          keyword: word,
-        },
-      })
-      .then((res) => {
-        setSynonymsData(res.data.synonyms);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        setError(error);
-      });
-  };
+  const { getData, result: synonymsData, isLoading, error } = useFetchData({
+    url: SEARCH_WORD_URL,
+    params: { keyword: word },
+    enabled: false,
+  });
 
   const addNewWord = () => {
     axios
@@ -51,21 +33,20 @@ function SearchPage({ navigate }) {
         navigate(`add-page/${res.data.id}/${res.data.groupId}`);
       })
       .catch((error) => {
-        setError(error);
+        // setError(error);
       });
   };
 
   const handleChange = (event) => {
-    setError(null);
     setWord(event.target.value);
   };
 
   const showSynonyms = () => {
     if (synonymsData) {
-      if (synonymsData.length) {
+      if (synonymsData.synonyms.length) {
         return (
           <Row>
-            {synonymsData.map((item) => (
+            {synonymsData.synonyms.map((item) => (
               <Colxx xs={3}>
                 <h3>
                   <Badge color="info">{item.name}</Badge>
@@ -119,7 +100,7 @@ function SearchPage({ navigate }) {
                     <Button
                       className="button-custom mt-1 "
                       disabled={!word.length || isLoading}
-                      onClick={searchWords}
+                      onClick={getData}
                     >
                       Submit
                     </Button>

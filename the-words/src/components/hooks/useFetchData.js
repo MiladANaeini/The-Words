@@ -1,37 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useFetchData = (fetchData = { url: '', callBack: () => { }, manualTrigger: false, params: {} }) => {
-    const [result, setResult] = useState([])
+const useFetchData = (configs = { url: '', callBack: () => { }, params: {}, enabled: true }) => {
+    const [result, setResult] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
-    const didMount = useRef(false);
 
     useEffect(() => {
-        if (didMount.current) {
+        if (configs.enabled) {
             getData();
-        } else {
-            didMount.current = true;
-            if (fetchData.manualTrigger) {
-                getData();
-            }
         }
-    }, [fetchData]);
+    }, []);
 
-    console.log("1");
-    console.log("fetchData", fetchData);
     const getData = () => {
-        console.log("2");
         setIsLoading(true);
         setError(null);
         axios
-            .get(fetchData.url, {
+            .get(configs.url, {
                 params: {
-                    ...fetchData.params
+                    ...configs.params
                 },
             })
             .then((res) => {
                 setResult(res.data);
+                callBack(res.data)
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -42,7 +34,7 @@ const useFetchData = (fetchData = { url: '', callBack: () => { }, manualTrigger:
     }
 
     return (
-        { isLoading, error, result }
+        { isLoading, error, result, getData }
     )
 }
 export default useFetchData
