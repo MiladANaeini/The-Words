@@ -51,7 +51,7 @@ const SearchPage = ({ navigate }) => {
   const showSynonyms = () => {
     if (synonymsData) {
       if (synonymsData.synonyms.length) {
-        return <SynonymsList synonymsData={synonymsData} />;
+        return <SynonymsList navigate={navigate} synonymsData={synonymsData} />;
       }
       return (
         <>

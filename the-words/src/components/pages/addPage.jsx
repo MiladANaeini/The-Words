@@ -98,7 +98,7 @@ function AddPage({ navigate }) {
               {isLoading ? (
                 <Loading />
               ) : (
-                <SynonymsList synonymsData={synonymsData} />
+                <SynonymsList synonymsData={synonymsData} navigate={navigate} />
               )}
             </CardBody>
           </Card>

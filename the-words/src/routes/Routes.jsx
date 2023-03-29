@@ -22,7 +22,6 @@ const AppRoutes = () => {
           path="/add-page/:newWordId/:newGroupId"
           element={<AddPage navigate={navigate} />}
         ></Route>
-        {/* <Route exact path="/details/:id" render={(props) => <DetailsPage globalStore={globalStore} {...props} /> } /> */}
       </Routes>
     </Suspense>
   );
