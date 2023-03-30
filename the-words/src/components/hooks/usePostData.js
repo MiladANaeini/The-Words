@@ -17,7 +17,6 @@ const usePostData = ({ url = '', callBack = () => { }, body = {} }) => {
                 setIsLoading(false);
             })
             .catch((error) => {
-                console.log(error);
                 setIsLoading(false);
                 setError(error);
             });

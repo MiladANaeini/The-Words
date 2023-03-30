@@ -27,7 +27,6 @@ const useFetchData = ({ url = '', callBack = () => { }, params = {}, enabled = t
                 setIsLoading(false);
             })
             .catch((error) => {
-                console.log('error', error);
                 setIsLoading(false);
                 setError(error);
             });
