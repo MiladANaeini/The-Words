@@ -11,7 +11,7 @@ function HomePage({ navigate }) {
             <div className="home-page-header">
               Welcome to the World of Words
             </div>
-            <div className="d-flex justify-content-center home-page-title">
+            <div className="d-flex justify-content-center home-page-title mt-3">
               <h3>
                 The Words is an application Created using ReactJS and NodeJs. In
                 this App you would be able to search for synonyms for a word and

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardBody,
   Card,
@@ -19,6 +19,7 @@ import SynonymsList from "../common/SynonymsList";
 
 const SearchPage = ({ navigate }) => {
   const [word, setWord] = useState("");
+  const [showError, setShowError] = useState(false);
 
   const { getData, result: synonymsData, isLoading, error } = useFetchData({
     url: SEARCH_WORD_URL,
@@ -36,9 +37,14 @@ const SearchPage = ({ navigate }) => {
     },
     callBack: redirectToAddSynonyms,
   });
-
+  useEffect(() => {
+    if (postError || error) {
+      setShowError(true);
+    }
+  }, [postError, error]);
   const handleChange = (event) => {
     setWord(event.target.value);
+    setShowError(false);
   };
 
   const handleOnKeyPress = (event) => {
@@ -46,6 +52,10 @@ const SearchPage = ({ navigate }) => {
       event.preventDefault();
       getData();
     }
+  };
+  const onSubmit = () => {
+    setShowError(false);
+    getData();
   };
 
   const showSynonyms = () => {
@@ -73,9 +83,13 @@ const SearchPage = ({ navigate }) => {
 
   return (
     <div>
-      {error && <Alert color="danger">{error.response.data.message}</Alert>}
-      {postError && (
-        <Alert color="danger">{postError.response.data.message}</Alert>
+      {showError && (
+        <>
+          {error && <Alert color="danger">{error.response.data.message}</Alert>}
+          {postError && (
+            <Alert color="danger">{postError.response.data.message}</Alert>
+          )}
+        </>
       )}
       <div>
         <Row className="d-flex justify-content-center">
@@ -101,7 +115,7 @@ const SearchPage = ({ navigate }) => {
                     <Button
                       className="button-custom mt-1 "
                       disabled={!word.length || isLoading}
-                      onClick={getData}
+                      onClick={onSubmit}
                     >
                       Submit
                     </Button>

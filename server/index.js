@@ -74,7 +74,6 @@ app.post("/add-new-word", (req, res) => {
     function processFile(readFileData) {
         let existingWord = readFileData.words.find((element) => element.name.toLowerCase() === keyword)
         if (!existingWord) {
-
             newWordList = readFileData
             const newWord = {
                 name: keyword,
@@ -85,7 +84,7 @@ app.post("/add-new-word", (req, res) => {
             writeToFile(newWordList)
             return res.json(newWord)
         } else {
-            return res.status(400).send({ message: "This synonym already exists please click on search" })
+            return res.status(400).send({ message: "This word already exists please click on submit" })
         }
     }
 })

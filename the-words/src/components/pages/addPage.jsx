@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardBody,
   Card,
@@ -24,6 +24,8 @@ import Loading from "../common/Loading";
 function AddPage({ navigate }) {
   const [synonym, setSynonym] = useState("");
   const { newWordId, newGroupId } = useParams();
+  const [showError, setShowError] = useState(false);
+
   const { getData, result: synonymsData, isLoading, error } = useFetchData({
     url: SEARCH_WORD_URL,
     params: { keyword: newWordId },
@@ -37,9 +39,14 @@ function AddPage({ navigate }) {
     },
     callBack: getData,
   });
-
+  useEffect(() => {
+    if (postError || error) {
+      setShowError(true);
+    }
+  }, [postError, error]);
   const handleChange = (event) => {
     setSynonym(event.target.value);
+    setShowError(false);
   };
 
   const handleOnKeyPress = (event) => {
@@ -55,9 +62,13 @@ function AddPage({ navigate }) {
 
   return (
     <div>
-      {error && <Alert color="danger">{error.response.data.message}</Alert>}
-      {postError && (
-        <Alert color="danger">{postError.response.data.message}</Alert>
+      {showError && (
+        <>
+          {error && <Alert color="danger">{error.response.data.message}</Alert>}
+          {postError && (
+            <Alert color="danger">{postError.response.data.message}</Alert>
+          )}
+        </>
       )}
       <Row className="d-flex justify-content-center">
         <Colxx lg={10} md={8} sm={10} xs={11} xxs={11}>
@@ -66,7 +77,7 @@ function AddPage({ navigate }) {
               <Form>
                 <FormGroup>
                   <div className="d-flex justify-content-center home-page-title">
-                    <h1>The Word "{newWordId}" Was Added</h1>
+                    <h1>The word "{newWordId}" has been added</h1>
                   </div>
                   <CardTitle className="input-label">
                     Do you wish to add synonym?
